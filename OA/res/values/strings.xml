@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">移动办公</string>
+    <string name="hello_world">办公自动化</string>
+    <string name="action_settings">Settings</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">图片上传</string>
+    <string name="memory_log">存储空间信息</string>
+    <string name="file_log">文件列表</string>
+
+    <string name="upload">上传</string>
+    <string name="download">下载</string>
+    <string name="signature">签名</string>
+    <string name="signature_delete">删除签名</string>
+    <string name="full_signature">全文批注</string>
+    <string name="note_list">批注清单</string>
+    <string name="text_note_list">注释清单</string>
+    <string name="bookmark_list">大纲</string>
+    <string name="annot_sound_list">语音清单</string>
+    <string name="text_note">文字注释</string>
+    <string name="note_delete">删除注释</string>
+    <string name="full_signature_delete">删除批注</string>
+    <string name="document_save">保存文档</string>
+    <string name="sound_note">语音批注</string>
+    <string name="delete_sound_note">删除语音</string>
+    <string name="camera">证件拍照</string>
+    <string name="about">关于</string>
+    <string name="digital_signature">在线数字签名</string>
+    <string name="local_digital_signature">数字签名</string>
+    <string name="verify">验证</string>
+    <string name="search">搜索</string>
+    <string name="area">区域签批</string>
+    <string name="document_saveas">另存</string>
+    <string name="save_pages">保存页面图片</string>
+    <string name="save">保存</string>
+    <string name="save_field_content">保存文本域内容</string>
+    <string name="duplex">同步签批</string>
+    
+    <string name="btnlocal">网络文档</string>
+    <string name="insertlable">URL</string>
+    <string name="edtinserttext">http://192.168.0.77:8080/iWebPDF/PDFServer.jsp</string>
+    
+    <string name="signature_url">数字签名服务器地址</string>
+    <string name="signature_url_edit">http://192.168.0.48:8888/Demo/DefaulServlet</string>
+    
+    <string name="user_name">用户名</string>
+    <string name="edt_user_name">admin</string>
+    <string name="field1">盖章域</string>
+    <string name="signaturefield1">Signature1</string>
+    <string name="field2">签名域</string>
+    <string name="signaturefield2">签字1</string>
+    <string name="config_other">其他</string>
+    <string name="pageview_mode">页面显示模板</string>
+    <string name="sign_mode">手写模式</string>
+    
+    <string name="annot_protection">保存后是否保护批注</string>
+    <string name="msg_loading_tip">正在加载，请稍候！</string>
+    
+    <!-- dialog -->
+    <string name="dialog_title">提示</string>
+    <string name="close_doc_title">Do you want to close the current document?</string>
+    <string name="ok">确定</string>
+    <string name="cancel">取消</string>
+    <string name="dialog_message_annot_signature">即将删除文档中当前用户的全部手写签名，是否删除？</string>
+    <string name="dialog_message_annot_hardwrite">即将删除文档中当前用户的全部手写批注，是否删除？</string>
+    <string name="dialog_message_annot_text">即将删除文档中当前用户的全部文字注释，是否删除？</string>
+    <string name="dialog_message_annot_sound">即将删除文档中当前用户的全部语音批注，是否删除？</string>
+    <string name="dialog_message_save">是否保存文档？</string>
+    
+    <!-- result -->
+    <string name="result_invalid_sign">至少有一个签名是无效的</string>
+    <string name="result_valid_sign">所有签名有效</string>
+    <string name="result_no_exist_sign">文档不存在数字签名</string>
+    <string name="result_add_content">所有签名有效，最后一次签名后追加了内容</string>
+    <string name="result_sign_unusual">数字签名异常</string>
+    <string name="result_success_sign">签名成功</string>
+    <string name="exception_tip">网络连接发生异常</string>
+    
+    <string name="dialog_save_info">PDF文档已修改，是否保存？</string>
+    
+    <string name="tip">提示</string>
+    <string name="btn_cancel">取消</string>
+    <string name="btn_sure">确定</string>
+    <string name="btn_save">保存</string>
+    <string name="btn_no_save">不保存</string>
+    
+</resources>

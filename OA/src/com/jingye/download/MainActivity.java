@@ -1,6 +1,8 @@
 package com.jingye.download;
 
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.InputStream;
@@ -14,6 +16,8 @@ import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -32,11 +36,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.jingye.upload.UploadActivity;
+import com.jingye.upload.UploadActivity.Asy_upload;
 import com.jingye.user.R;
 
 public class MainActivity extends Activity {
 	private static final String TAG = "MainActivity";
-	private TextView tvTemp;
 	private ListView bookList;
 	private Button btn_download;
 	private Button btn_upload;
@@ -44,27 +48,25 @@ public class MainActivity extends Activity {
 	private List<HashMap<String, String>> fileData;
 	private final static String SDCARD_PATH = Environment
 			.getExternalStorageDirectory().getPath().toString()+"/敬业文件/";
-	private String actionUrl = "http://61.182.201.194:3931/CustomerSatisfaction/?requestflag=downfiles01&fid=28";
+	private String downloadUrl = "http://61.182.201.194:3931/CustomerSatisfaction/?requestflag=downfiles01&fid=28";
+	private String uploadUrl = "http://61.182.201.194:3931/CustomerSatisfaction/?requestflag=upfiles02";
 	//private String actionUrl = "http://61.182.203.110:8999/JingYeYunService/download.aspx";
 	StringBuffer sb;
+	//ArrayList<String> list = new ArrayList<String>();
 	protected int local_flag = LOCAL_FILE;
 	private final static int WEB_FILE = 0;
 	private final static int LOCAL_FILE = 1;
-	
+	String newName ="";
+	String uploadFilePath = "";
 	@SuppressLint("HandlerLeak")
 	private Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
-			if (msg.what == 10) { // 更改选中商品的总价格
-				String price = (String) msg.obj;
-				if (price !=null) {
-					tvTemp.setText("文件名：" + price);
-					// layout.setVisibility(View.VISIBLE);
-				} else {
-					// layout.setVisibility(View.GONE);
-					tvTemp.setText("传值失败！");
-				}
+			if (msg.what == 10) { // 更改选中商品的总价
+					newName = (String) msg.obj;
+					uploadFilePath = Environment.getExternalStorageDirectory()
+					+ "/敬业文件/" + newName;
 			}
 		}
 	};
@@ -74,7 +76,6 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         fileData = getData(SDCARD_PATH);
-        tvTemp = (TextView)findViewById(R.id.tv_temp);
         //上传
         btn_upload = (Button)findViewById(R.id.btn_upload);
         btn_upload.setOnClickListener(new OnClickListener() {
@@ -90,8 +91,13 @@ public class MainActivity extends Activity {
  				intent.setAction(Intent.ACTION_VIEW);
  				intent.setData(uri);
  				intent.putExtra("filename", fileName);
- 				startActivity(intent);
- 				Log.v(TAG,"pdf上传成功！");*/
+ 				startActivity(intent);*/
+
+ 				if(uploadFile()){
+ 					showDialog("上传成功!");
+ 				}else {
+					showDialog("上传失败！");
+				}
  			}
  		});
 		
@@ -109,8 +115,6 @@ public class MainActivity extends Activity {
         
         bookList = (ListView) findViewById(R.id.book_directory);
         adapter = new BookAdapter(this,handler,fileData);
-		
-		Log.v(TAG, SDCARD_PATH);
 		//adapter.setFileData(fileData);
 		bookList.setAdapter(adapter);	
 		
@@ -130,6 +134,112 @@ public class MainActivity extends Activity {
 			}
 		});  
     }
+    
+    /* 显示Dialog的method */
+    private void showDialog(String mess)
+    {
+      new AlertDialog.Builder(MainActivity.this).setTitle("上传结果")
+       .setMessage(mess)
+       .setNegativeButton("确定",new DialogInterface.OnClickListener()
+       {
+         public void onClick(DialogInterface dialog, int which)
+         {          
+         }
+       })
+       .show();
+    }
+    
+    /* 上传文件至Server的方法 */
+    private boolean uploadFile()
+    {
+  	        Asy_upload asy = new Asy_upload();
+	  		if(asy.execute("") != null){
+	  			return true;
+	  		}else {
+	  			return false;
+			}	  		
+    }
+
+    public class Asy_upload extends AsyncTask<Object, Object, Object> {
+		@Override
+		protected Object doInBackground(Object... params) {
+			String end = "\r\n";
+	        String twoHyphens = "--";
+	        String boundary = "*****";
+	     
+	        try
+	        {
+	         
+	          URL url =new URL(uploadUrl);
+	          HttpURLConnection con=(HttpURLConnection)url.openConnection();
+	           //允许Input、Output，不使用Cache 
+	          con.setDoInput(true);
+	          con.setDoOutput(true);
+	          con.setUseCaches(false);
+	           //设置传送的method=POST 
+	          con.setRequestMethod("POST");
+	           //setRequestProperty 
+	          con.setRequestProperty("Connection", "Keep-Alive");
+	          con.setRequestProperty("Charset", "UTF-8");
+	          con.setRequestProperty("Content-Type",
+	                             "multipart/form-data;boundary="+boundary);
+	           //设置DataOutputStream 
+	          DataOutputStream ds = 
+	            new DataOutputStream(con.getOutputStream());
+
+	          ds.writeBytes(twoHyphens + boundary + end );
+	          //getBytes("ISO-8859-1"),"UTF-8"
+	          System.out.println("上传文件的名字："+newName);
+	          ds.writeBytes("Content-Disposition: form-data; " +
+	                        "name=\"file1\";filename=\"" +
+	                      newName+"\"" + end);
+	          ds.writeBytes(end);   
+
+	           //取得文件的FileInputStream 
+	          FileInputStream fStream = new FileInputStream(uploadFilePath);
+	           //设置每次写入1024bytes 
+	          int bufferSize = 2048;
+	          byte[] buffer = new byte[bufferSize];
+
+	          int length = -1;
+	          // 从文件读取数据至缓冲区 
+	          while((length = fStream.read(buffer)) != -1)
+	          {
+	            // 将资料写入DataOutputStream中 
+	            ds.write(buffer, 0, length);
+	            System.out.println("正在上传："+length);
+	          }
+	          ds.writeBytes(end);
+	          ds.writeBytes(twoHyphens + boundary + twoHyphens + end);
+
+	           //close streams 
+	          fStream.close();
+	          ds.flush();
+
+	           //取得Response内容 
+	          InputStream is = con.getInputStream();
+	          int ch;
+	          StringBuffer b =new StringBuffer();
+	          while( ( ch = is.read() ) != -1 )
+	          {
+	            b.append( (char)ch );
+	            //is.read(buffer, 0, b.length());
+	          }
+	          //is.read(buffer, byteOffset, byteCount)
+	           //将Response显示于Dialog 
+	          //showDialog("上传成功"+b.toString().trim());
+	          System.out.println("上传成功"+b.toString().trim());
+	          // 关闭DataOutputStream 
+	          ds.close();
+	        }
+	        catch(Exception e)
+	        {
+	          //showDialog("上传失败"+e);
+	        	System.out.println("上传失败"+e);
+	        }
+			return true;
+		}
+	}
     
 	public void downLoadFile(){
 		Asy_downloadfile asy = new Asy_downloadfile();
@@ -157,7 +267,7 @@ public class MainActivity extends Activity {
 
   			try {
   			         // 构造URL   
-  			         URL url = new URL(actionUrl);   
+  			         URL url = new URL(downloadUrl);   
 	  	  	          HttpURLConnection con=(HttpURLConnection)url.openConnection();
 	  	  	          /* 允许Input、Output，不使用Cache */
 	  	  	          con.setDoInput(true);

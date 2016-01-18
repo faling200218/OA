@@ -37,8 +37,6 @@ public class BookAdapter extends BaseAdapter {
   private ViewHolder holder;
   protected List<HashMap<String, String>> fileData;
   private LayoutInflater inflater;
-  private static HashMap<Integer, Boolean> isSelected;
-  private String filename;
   protected  class ViewHolder {
     protected TextView fileName;
     protected CheckBox cbfile;
@@ -50,29 +48,8 @@ public BookAdapter(Context context,Handler mHandler,List<HashMap<String, String>
     this.inflater = LayoutInflater.from(context);
     this.mHandler = mHandler;
     this.fileData = fileData;
-    isSelected = new HashMap<Integer, Boolean>();
-	//initDate();
   }
-  
-  //public void setFileData(List<HashMap<String, String>> fileData){
-  //  this.fileData = fileData;
-  //}
-  
-//初始化isSelected的数据
-	private void initDate() {
-		for (int i = 0; i < fileData.size(); i++) {
-			getIsSelected().put(i, false);
-		}
-	}
 
-	public static HashMap<Integer, Boolean> getIsSelected() {
-		return isSelected;
-	}
-
-	public static void setIsSelected(HashMap<Integer, Boolean> isSelected) {
-		BookAdapter.isSelected = isSelected;
-	}
-  
   /* （非 Javadoc）
    * @see android.widget.Adapter#getCount()
    */
@@ -120,30 +97,22 @@ public BookAdapter(Context context,Handler mHandler,List<HashMap<String, String>
     return convertView;
   }
   
-//CheckBox选择改变监听器
+    //CheckBox选择改变监听器
 	private final class CheckBoxChangedListener implements
 			OnCheckedChangeListener {
 		public void onCheckedChanged(CompoundButton cb, boolean flag) {
 			int position = (Integer) cb.getTag();
-			getIsSelected().put(position, flag);
-			filename = fileData.get(position).get("filename");
-			mHandler.sendMessage(mHandler.obtainMessage(10, filename));
-			// 如果所有的物品全部被选中，则全选按钮也默认被选中
-			//mHandler.sendMessage(mHandler.obtainMessage(11, isAllSelected()));
+			String filename ="";
+			if(flag){
+				filename = fileData.get(position).get("filename");
+				mHandler.sendMessage(mHandler.obtainMessage(10, filename));
+			}else {
+				filename = fileData.get(position).get("filename");
+				mHandler.sendMessage(mHandler.obtainMessage(11, filename));
+			}
+
 		}
 	}
   
-	/*private Handler handler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			super.handleMessage(msg);
-			if (msg.what == 1) { // 更改商品数量
-				//((TextView) msg.obj).setText(String.valueOf(number));
-				// 更改商品数量后，通知Activity更新需要付费的总金额
-				mHandler.sendMessage(mHandler
-						.obtainMessage(10, filename));
-			}
-		}
-	};*/
 	
 }

@@ -29,13 +29,7 @@
        android:textSize="18sp" 
        android:layout_marginLeft="4dp"
        android:layout_centerVertical="true"/>
-
-    <TextView 
-        android:id="@+id/tv_temp"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:layout_toRightOf="@+id/btn_upload"
-        android:text="文件名"/>    
+  
     <Button
         android:id="@+id/btn_download"
         android:layout_width="wrap_content"
@@ -50,7 +44,7 @@
         android:textSize="18sp" 
         android:layout_alignParentRight="true"
         android:layout_marginRight="4dp"
-        android:layout_alignTop="@+id/TextView_upload"/>
+        android:layout_alignTop="@+id/btn_upload"/>
     </RelativeLayout>
 
     <ListView

@@ -1,35 +1,26 @@
-/*
- * BookAdapter.java
- * classes : com.kinggrid.iapppdf.demo.BookAdapter
- * @author Ϳ��֮
- * V 1.0.0
- * Create at 2014��5��19�� ����3:45:39
- */
 package com.jingye.download;
 
 import java.util.HashMap;
 import java.util.List;
 
-import com.jingye.user.R;
-
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
-import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.TextView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.TextView;
+
+import com.jingye.user.R;
 
 /**
  * com.kinggrid.iapppdf.demo.BookAdapter
- * @author Ϳ��֮ <br/>
- * create at 2014��5��19�� ����3:45:39
+ * @author 涂博之 <br/>
+ * create at 2014年5月19日 下午3:45:39
  */
 public class BookAdapter extends BaseAdapter {
   private static final String TAG = "BookAdapter";
@@ -50,28 +41,28 @@ public BookAdapter(Context context,Handler mHandler,List<HashMap<String, String>
     this.fileData = fileData;
   }
 
-  /* ���� Javadoc��
+  /* （非 Javadoc）
    * @see android.widget.Adapter#getCount()
    */
   public int getCount() {
     return fileData.size();
   }
 
-  /* ���� Javadoc��
+  /* （非 Javadoc）
    * @see android.widget.Adapter#getItem(int)
    */
   public Object getItem(int position) {
     return fileData.get(position);
   }
 
-  /* ���� Javadoc��
+  /* （非 Javadoc）
    * @see android.widget.Adapter#getItemId(int)
    */
   public long getItemId(int position) {
     return position;
   }
 
-  /* ���� Javadoc��
+  /* （非 Javadoc）
    * @see android.widget.Adapter#getView(int, android.view.View, android.view.ViewGroup)
    */
   public View getView(int position, View convertView, ViewGroup parent) {
@@ -88,16 +79,16 @@ public BookAdapter(Context context,Handler mHandler,List<HashMap<String, String>
     }else{
       holder = (ViewHolder) convertView.getTag();
     }
-    
+    //这一句比较长，只是控制文件名的显示，拼接字符串
     holder.fileName.setText(fileData.get(position).get(
         "filename").substring(0,fileData.get(position).get("filename").lastIndexOf(".")).length()>13?fileData.get(position).get("filename").substring(0, 13)+"...":fileData.get(position).get("filename").substring(0, fileData.get(position).get("filename").lastIndexOf(".")));
-    holder.cbfile.setTag(position);
+    holder.cbfile.setTag(position);   //复选框标签和文件名位置序号一致，这样后面就可以根据选中复选框来得到文件名
     //holder.cbfile.setChecked(getIsSelected().get(position));
     holder.cbfile.setOnCheckedChangeListener(new CheckBoxChangedListener());
     return convertView;
   }
   
-    //CheckBoxѡ��ı������
+    //CheckBox选择改变监听器
 	private final class CheckBoxChangedListener implements
 			OnCheckedChangeListener {
 		public void onCheckedChanged(CompoundButton cb, boolean flag) {
@@ -105,11 +96,13 @@ public BookAdapter(Context context,Handler mHandler,List<HashMap<String, String>
 			String filename ="";
 			if(flag){
 				filename = fileData.get(position).get("filename");
-				mHandler.sendMessage(mHandler.obtainMessage(10, filename));
-			}else {
-				filename = fileData.get(position).get("filename");
-				mHandler.sendMessage(mHandler.obtainMessage(11, filename));
+				mHandler.sendMessage(mHandler.obtainMessage(10, filename));  //将文件名发送到主界面
 			}
+			//还没有实现多文件上传功能，这一步先不用
+			//else {
+			//	filename = fileData.get(position).get("filename");
+			//	mHandler.sendMessage(mHandler.obtainMessage(11, filename));
+			//}
 
 		}
 	}

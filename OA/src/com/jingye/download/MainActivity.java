@@ -7,9 +7,11 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,10 +35,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import com.jingye.upload.UploadActivity;
-import com.jingye.upload.UploadActivity.Asy_upload;
 import com.jingye.user.R;
 
 public class MainActivity extends Activity {
@@ -47,8 +46,8 @@ public class MainActivity extends Activity {
 	private BookAdapter adapter;
 	private List<HashMap<String, String>> fileData;
 	private final static String SDCARD_PATH = Environment
-			.getExternalStorageDirectory().getPath().toString()+"/¾´ÒµÎÄ¼ş/";
-	private String downloadUrl = "http://61.182.201.194:3931/CustomerSatisfaction/?requestflag=downfiles01&fid=28";
+			.getExternalStorageDirectory().getPath().toString()+"/æ•¬ä¸šæ–‡ä»¶/";
+	private String downloadUrl = "http://61.182.201.194:3931/CustomerSatisfaction/?requestflag=downfiles01&fid=42";
 	private String uploadUrl = "http://61.182.201.194:3931/CustomerSatisfaction/?requestflag=upfiles02";
 	//private String actionUrl = "http://61.182.203.110:8999/JingYeYunService/download.aspx";
 	StringBuffer sb;
@@ -58,69 +57,43 @@ public class MainActivity extends Activity {
 	private final static int LOCAL_FILE = 1;
 	String newName ="";
 	String uploadFilePath = "";
+	
+	//æ¥æ”¶é€‚é…å™¨é¡µé¢ä¼ é€è¿‡æ¥çš„æ–‡ä»¶å=============================================
 	@SuppressLint("HandlerLeak")
 	private Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
-			if (msg.what == 10) { // ¸ü¸ÄÑ¡ÖĞÉÌÆ·µÄ×Ü¼Û
+			if (msg.what == 10) { // æ›´æ”¹é€‰ä¸­å•†å“çš„æ€»ä»·
 					newName = (String) msg.obj;
 					uploadFilePath = Environment.getExternalStorageDirectory()
-					+ "/¾´ÒµÎÄ¼ş/" + newName;
+					+ "/æ•¬ä¸šæ–‡ä»¶/" + newName;
 			}
 		}
 	};
+	//end æ¥æ”¶é€‚é…å™¨é¡µé¢ä¼ é€è¿‡æ¥çš„æ–‡ä»¶å===========================================
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        fileData = getData(SDCARD_PATH);
-        //ÉÏ´«
-        btn_upload = (Button)findViewById(R.id.btn_upload);
-        btn_upload.setOnClickListener(new OnClickListener() {
-
- 			public void onClick(View v) {
-
- 				/*String fileName = fileData.get(position).get("filename");
- 				String filePath = Environment.getExternalStorageDirectory()
- 						+ "/¾´ÒµÎÄ¼ş/" + fileData.get(position).get("filename");
- 		        Log.v(TAG,fileName);
- 		        Uri uri = Uri.parse(filePath);
- 				Intent intent = new Intent(getApplicationContext(), UploadActivity.class);
- 				intent.setAction(Intent.ACTION_VIEW);
- 				intent.setData(uri);
- 				intent.putExtra("filename", fileName);
- 				startActivity(intent);*/
-
- 				if(uploadFile()){
- 					showDialog("ÉÏ´«³É¹¦!");
- 				}else {
-					showDialog("ÉÏ´«Ê§°Ü£¡");
-				}
- 			}
- 		});
-		
         
-        //ÏÂÔØ
-        btn_download = (Button)findViewById(R.id.btn_download);
-        btn_download.setOnClickListener(new OnClickListener() {
+        findview();
+    }
 
- 			public void onClick(View v) {
-
- 				downLoadFile();
- 				Log.v(TAG,"pdfÏÂÔØ³É¹¦£¡");
- 			}
- 		});
-        
+    public void findview(){
+    	//listviewæ˜¾ç¤º
+    	//=========================================================================
+    	fileData = getData(SDCARD_PATH);   //bookListçš„æ•°æ®æº
         bookList = (ListView) findViewById(R.id.book_directory);
         adapter = new BookAdapter(this,handler,fileData);
 		//adapter.setFileData(fileData);
 		bookList.setAdapter(adapter);	
 		
-		LayoutParams params = bookList.getLayoutParams();
-		params.height = adapter.fileData.size() * 500;
+		LayoutParams params = bookList.getLayoutParams(); //è¿™ä¸‰å¥æ§åˆ¶bookListé«˜åº¦ï¼Œæ˜¯é‡‘æ ¼demoçš„åŸä»£ç ï¼Œ
+		params.height = adapter.fileData.size() * 500;    //ä¸çŸ¥ä¸ºä»€ä¹ˆè¦è¿™æ ·è®¾ç½®ï¼Œæˆ‘åœ¨åé¢ä¹˜ä»¥500å¢åŠ äº†é«˜åº¦ã€‚
 		bookList.setLayoutParams(params);
+		//listview itemç‚¹å‡»äº‹ä»¶
 		bookList.setOnItemClickListener(new OnItemClickListener() {
 
 			public void onItemClick(AdapterView<?> parent, View view,
@@ -128,38 +101,62 @@ public class MainActivity extends Activity {
 
 				Log.v(TAG,fileData.get(position).get("filename"));
 				String fileName = Environment.getExternalStorageDirectory()
-						+ "/¾´ÒµÎÄ¼ş/" + fileData.get(position).get("filename");
+						+ "/æ•¬ä¸šæ–‡ä»¶/" + fileData.get(position).get("filename");
 				doOpenFile(fileName);
 				
 			}
-		});  
-    }
-    
-    /* ÏÔÊ¾DialogµÄmethod */
-    private void showDialog(String mess)
-    {
-      new AlertDialog.Builder(MainActivity.this).setTitle("ÉÏ´«½á¹û")
-       .setMessage(mess)
-       .setNegativeButton("È·¶¨",new DialogInterface.OnClickListener()
-       {
-         public void onClick(DialogInterface dialog, int which)
-         {          
-         }
-       })
-       .show();
-    }
-    
-    /* ÉÏ´«ÎÄ¼şÖÁServerµÄ·½·¨ */
-    private boolean uploadFile()
-    {
-  	        Asy_upload asy = new Asy_upload();
-	  		if(asy.execute("") != null){
-	  			return true;
-	  		}else {
-	  			return false;
-			}	  		
+		});
+    	//=========================================================================
+		//end listviewæ˜¾ç¤º
+		
+        //ä¸Šä¼ 
+		//==========================================================================
+        btn_upload = (Button)findViewById(R.id.btn_upload);
+        btn_upload.setOnClickListener(new OnClickListener() {
+
+ 			public void onClick(View v) {
+ 				//è°ƒç”¨å¼‚æ­¥ä¸Šä¼ æ–‡ä»¶æ–¹æ³•
+ 				Asy_upload asy = new Asy_upload();
+ 		  		asy.execute("");
+ 		  		//å¼‚æ­¥æ˜¯è€—æ—¶æ“ä½œï¼Œä¼‘çœ 0.5sï¼ˆæ­¤å€¼å¯è°ƒï¼‰
+ 		  		try {
+ 		  			Thread.sleep(500);
+ 		  		} catch (InterruptedException e1) {
+ 		  			e1.printStackTrace();
+ 		  		}
+ 			}
+ 		});
+        //==========================================================================
+        //end ä¸Šä¼ 
+        
+        //ä¸‹è½½
+        //==========================================================================
+        btn_download = (Button)findViewById(R.id.btn_download);
+        btn_download.setOnClickListener(new OnClickListener() {
+
+ 			public void onClick(View v) {
+ 				//è°ƒç”¨å¼‚æ­¥ä¸‹è½½æ–‡ä»¶æ–¹æ³•
+ 				Asy_downloadfile asy = new Asy_downloadfile();
+ 		  		asy.execute("");
+ 		  		//å¼‚æ­¥è€—æ—¶0.5sï¼ˆæ­¤å€¼å¯è°ƒï¼‰
+ 		  		try {
+ 		  			Thread.sleep(500);
+ 		  		} catch (InterruptedException e1) {
+ 		  			e1.printStackTrace();
+ 		  		}
+
+ 				//ä¸‹è½½è¿‡åé‡æ–°åŠ è½½è¾¾åˆ°é¡µé¢åˆ·æ–°æ•ˆæœ
+ 				fileData = getData(SDCARD_PATH);
+ 				adapter = new BookAdapter(MainActivity.this,handler,fileData);
+ 				//adapter.setFileData(fileData);
+ 				bookList.setAdapter(adapter);
+ 			}
+ 		});
+        //========================================================================
+        //end ä¸‹è½½
     }
 
+    //å¼‚æ­¥ä¸Šä¼ æ–¹æ³•
     public class Asy_upload extends AsyncTask<Object, Object, Object> {
 		@Override
 		protected Object doInBackground(Object... params) {
@@ -169,45 +166,50 @@ public class MainActivity extends Activity {
 	     
 	        try
 	        {
-	         
 	          URL url =new URL(uploadUrl);
 	          HttpURLConnection con=(HttpURLConnection)url.openConnection();
-	           //ÔÊĞíInput¡¢Output£¬²»Ê¹ÓÃCache 
+	           //å…è®¸Inputã€Outputï¼Œä¸ä½¿ç”¨Cache 
 	          con.setDoInput(true);
 	          con.setDoOutput(true);
 	          con.setUseCaches(false);
-	           //ÉèÖÃ´«ËÍµÄmethod=POST 
+	           //è®¾ç½®ä¼ é€çš„method=POST 
 	          con.setRequestMethod("POST");
 	           //setRequestProperty 
 	          con.setRequestProperty("Connection", "Keep-Alive");
 	          con.setRequestProperty("Charset", "UTF-8");
 	          con.setRequestProperty("Content-Type",
 	                             "multipart/form-data;boundary="+boundary);
-	           //ÉèÖÃDataOutputStream 
+	           //è®¾ç½®DataOutputStream 
 	          DataOutputStream ds = 
 	            new DataOutputStream(con.getOutputStream());
-
 	          ds.writeBytes(twoHyphens + boundary + end );
-	          //getBytes("ISO-8859-1"),"UTF-8"
-	          System.out.println("ÉÏ´«ÎÄ¼şµÄÃû×Ö£º"+newName);
+	          //ä¸Šä¼ æ–‡ä»¶åæ—¶è¦ç¼–ç ï¼Œè¦ä¸ç„¶æœåŠ¡ç«¯æ–‡ä»¶åä¼šä¹±ç 
+	          //===================================================
+	          try {
+					newName = URLEncoder.encode(newName,"UTF-8");
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	          //====================================================
 	          ds.writeBytes("Content-Disposition: form-data; " +
 	                        "name=\"file1\";filename=\"" +
 	                      newName+"\"" + end);
 	          ds.writeBytes(end);   
 
-	           //È¡µÃÎÄ¼şµÄFileInputStream 
+	           //å–å¾—æ–‡ä»¶çš„FileInputStream 
 	          FileInputStream fStream = new FileInputStream(uploadFilePath);
-	           //ÉèÖÃÃ¿´ÎĞ´Èë1024bytes 
+	           //è®¾ç½®æ¯æ¬¡å†™å…¥1024bytes 
 	          int bufferSize = 2048;
 	          byte[] buffer = new byte[bufferSize];
 
 	          int length = -1;
-	          // ´ÓÎÄ¼ş¶ÁÈ¡Êı¾İÖÁ»º³åÇø 
+	          // ä»æ–‡ä»¶è¯»å–æ•°æ®è‡³ç¼“å†²åŒº 
 	          while((length = fStream.read(buffer)) != -1)
 	          {
-	            // ½«×ÊÁÏĞ´ÈëDataOutputStreamÖĞ 
+	            // å°†èµ„æ–™å†™å…¥DataOutputStreamä¸­ 
 	            ds.write(buffer, 0, length);
-	            System.out.println("ÕıÔÚÉÏ´«£º"+length);
+	            System.out.println("æ­£åœ¨ä¸Šä¼ ï¼š"+length);
 	          }
 	          ds.writeBytes(end);
 	          ds.writeBytes(twoHyphens + boundary + twoHyphens + end);
@@ -216,101 +218,112 @@ public class MainActivity extends Activity {
 	          fStream.close();
 	          ds.flush();
 
-	           //È¡µÃResponseÄÚÈİ 
+	           //å–å¾—Responseå†…å®¹ 
 	          InputStream is = con.getInputStream();
 	          int ch;
 	          StringBuffer b =new StringBuffer();
 	          while( ( ch = is.read() ) != -1 )
 	          {
 	            b.append( (char)ch );
-	            //is.read(buffer, 0, b.length());
 	          }
-	          //is.read(buffer, byteOffset, byteCount)
-	           //½«ResponseÏÔÊ¾ÓÚDialog 
-	          //showDialog("ÉÏ´«³É¹¦"+b.toString().trim());
-	          System.out.println("ÉÏ´«³É¹¦"+b.toString().trim());
-	          // ¹Ø±ÕDataOutputStream 
+	          onDestroy();
+	           //å°†Responseæ˜¾ç¤ºäºDialogï¼ˆå°†è¿™è¡Œæ³¨é‡Šï¼Œä¸»è¦æ˜¯å› ä¸ºåœ¨å¼‚æ­¥é‡Œé¢è°ƒç”¨å¯¹è¯æ¡†ä¼šæŠ¥é”™ï¼ŒåŸå› æœªçŸ¥ï¼‰
+	          //showDialog("ä¸Šä¼ æˆåŠŸ"+b.toString().trim());
+	          System.out.println("ä¸Šä¼ æˆåŠŸ"+b.toString().trim());
+	          // å…³é—­DataOutputStream 
 	          ds.close();
 	        }
 	        catch(Exception e)
 	        {
-	          //showDialog("ÉÏ´«Ê§°Ü"+e);
-	        	System.out.println("ÉÏ´«Ê§°Ü"+e);
+	            //showDialog("ä¸Šä¼ å¤±è´¥"+e);
+	        	System.out.println("ä¸Šä¼ å¤±è´¥"+e);
 	        }
 			return true;
 		}
 	}
-    
-	public void downLoadFile(){
-		Asy_downloadfile asy = new Asy_downloadfile();
-  		asy.execute("");
-  		try {
-  			Thread.sleep(500);
-  		} catch (InterruptedException e1) {
-  			e1.printStackTrace();
-  		}
-	}
 	
-	//Òì²½ÏÂÔØÎÄ¼ş
+	//å¼‚æ­¥ä¸‹è½½æ–‡ä»¶
 	public class Asy_downloadfile extends AsyncTask<Object, Object, Object> {
   		@Override
-  		protected Object doInBackground(Object... params) {
-  			
-  			// »ñµÃ´æ´¢¿¨Â·¾¶£¬¹¹³É ±£´æÎÄ¼şµÄÄ¿±êÂ·¾¶
+  		protected Object doInBackground(Object... params) {	
+  			// è·å¾—å­˜å‚¨å¡è·¯å¾„ï¼Œæ„æˆ ä¿å­˜æ–‡ä»¶çš„ç›®æ ‡è·¯å¾„
   			String dirName = "";
-  			dirName = Environment.getExternalStorageDirectory()+"/¾´ÒµÎÄ¼ş/";
+  			dirName = Environment.getExternalStorageDirectory()+"/æ•¬ä¸šæ–‡ä»¶/";
   			File f = new File(dirName);
+  			//å¦‚æœè·¯å¾„ä¸å­˜åœ¨å°±æ–°å»º
   			if(!f.exists())
   			{
   			    f.mkdir();
   			}
 
   			try {
-  			         // ¹¹ÔìURL   
+  			         // æ„é€ URL   
   			         URL url = new URL(downloadUrl);   
 	  	  	          HttpURLConnection con=(HttpURLConnection)url.openConnection();
-	  	  	          /* ÔÊĞíInput¡¢Output£¬²»Ê¹ÓÃCache */
+	  	  	          /* å…è®¸Inputã€Outputï¼Œä¸ä½¿ç”¨Cache */
 	  	  	          con.setDoInput(true);
 	  	  	          con.setDoOutput(true);
 	  	  	          con.setUseCaches(false);
-  			         //»ñµÃÎÄ¼şµÄ³¤¶È
+  			         //è·å¾—æ–‡ä»¶çš„é•¿åº¦
   			         int contentLength = con.getContentLength();
-  			         System.out.println("³¤¶È :"+contentLength); 
+  			         System.out.println("é•¿åº¦ :"+contentLength); 
+  			         //è§£ç è·å¾—æœåŠ¡ç«¯æ–‡ä»¶åå­—æ®µï¼Œè¦è·å¾—æ­£ç¡®ä¸­æ–‡æ–‡ä»¶åï¼Œéœ€è¦è§£ç å¹¶æ‹¼æ¥å­—ç¬¦ä¸²
   			         String nnString = URLDecoder.decode(con.getHeaderField("Content-Disposition"),"UTF-8");
-  			        //×¼±¸Æ´½ÓĞÂµÄÎÄ¼şÃû£¨±£´æÔÚ´æ´¢¿¨ºóµÄÎÄ¼şÃû£©
+  			        //æ‹¼æ¥æ–°çš„æ–‡ä»¶åï¼ˆä¿å­˜åœ¨å­˜å‚¨å¡åçš„æ–‡ä»¶åï¼‰
   			         String newFilename = dirName +nnString.substring(nnString.indexOf("=")+1,nnString.length()); 
   		  			File file = new File(newFilename);
-  		  			//Èç¹ûÄ¿±êÎÄ¼şÒÑ¾­´æÔÚ£¬ÔòÉ¾³ı¡£²úÉú¸²¸Ç¾ÉÎÄ¼şµÄĞ§¹û
+  		  			//å¦‚æœç›®æ ‡æ–‡ä»¶å·²ç»å­˜åœ¨ï¼Œåˆ™åˆ é™¤ã€‚äº§ç”Ÿè¦†ç›–æ—§æ–‡ä»¶çš„æ•ˆæœ
   		  			if(file.exists())
   		  			{
   		  			    file.delete();
   		  			}
-  			         System.out.println("++++++++++++++++"+newFilename);
-  			         // ÊäÈëÁ÷   
+  			         // è¾“å…¥æµ   
   			         final InputStream is = con.getInputStream();  
-  			         // 4KµÄÊı¾İ»º³å   
+  			         // 4Kçš„æ•°æ®ç¼“å†²   
   			         byte[] bs = new byte[4096];   
-  			         // Êä³öµÄÎÄ¼şÁ÷   
+  			         // è¾“å‡ºçš„æ–‡ä»¶æµ   
   			         OutputStream os = new FileOutputStream(newFilename); 
 		  	          int length = -1;
-		  	          /* ´ÓÎÄ¼ş¶ÁÈ¡Êı¾İÖÁ»º³åÇø */
+		  	          /* ä»æ–‡ä»¶è¯»å–æ•°æ®è‡³ç¼“å†²åŒº */
 		  	          while((length = is.read(bs)) != -1)
 		  	          {
-		  	            /* ½«×ÊÁÏĞ´ÈëDataOutputStreamÖĞ */
+		  	            /* å°†èµ„æ–™å†™å…¥DataOutputStreamä¸­ */
 		  	            os.write(bs, 0, length);
 		  	            System.out.println(length);
 		  	          } 
-  			         // Íê±Ï£¬¹Ø±ÕËùÓĞÁ´½Ó   
+  			         // å®Œæ¯•ï¼Œå…³é—­æ‰€æœ‰é“¾æ¥   
   			         os.close();  
-  			         is.close();
-  			            
+  			         is.close(); 
+  			         System.out.println("ä¸‹è½½æˆåŠŸï¼");
   			} catch (Exception e) {
   			        e.printStackTrace();
   			}
-            return Log.v(TAG,"ÏÂÔØ³É¹¦£¡");
+            return true;
   		}
   	}
 	
+	  /* æ˜¾ç¤ºDialogçš„method */
+    private void showDialog(String mess)
+    {
+      new AlertDialog.Builder(MainActivity.this).setTitle("ä¸Šä¼ ç»“æœ")
+       .setMessage(mess)
+       .setNegativeButton("ç¡®å®š",new DialogInterface.OnClickListener()
+       {
+         public void onClick(DialogInterface dialog, int which)
+         {          
+         }
+       })
+       .show();
+    }
+	
+	//============================================================================
+	/* ä»¥ä¸‹æ˜¯é‡‘æ ¼demoåŸä»£ç ï¼Œç”¨äºæ‰“å¼€pdfæ–‡æ¡£
+	 * é¡ºä¾¿è¯´ä¸€ä¸‹ï¼Œæ•´ç†è¿‡åçš„é¡¹ç›®ï¼Œä¸»è¦æœ‰ä¸‰ä¸ªåŒ…ï¼š
+	 * 1.ä¸Šä¼ ä¸‹è½½åŒ…com.jingye.download;
+	 * 2.é‡‘æ ¼æ‰‹ç­¾åŒ…com.jingye.signature;
+	 * 3.ç”¨æˆ·ç™»å½•åŒ…com.jingye.user;
+	 * ä½³è£ä½ ä¸»è¦è´Ÿè´£ç¬¬1ä¸ªåŒ…å’Œç¬¬3ä¸ªåŒ…ï¼Œç¬¬2ä¸ªåŒ…æˆ‘æ¥è´Ÿè´£ã€‚
+	 * å› ä¸ºé‡‘æ ¼æºç è¿˜æ²¡æœ‰å¯¹æˆ‘ä»¬å…¬å¼€ï¼Œæ‰€ä»¥æˆ‘ç›®å‰åœ¨åšç¬¬1ä¸ªåŒ…ï¼Œéšåæˆ‘ä¼šäº¤ç»™ä½ ã€‚*/
     private void doOpenFile(String filepath) {
 		File file = new File(filepath);
 		final Uri uri = Uri.fromFile(file);
@@ -319,6 +332,7 @@ public class MainActivity extends Activity {
 		final Intent intent = new Intent("android.intent.action.VIEW", uri);
 		/*intent.setClassName("com.kinggrid.iapppdf.demo",
 				"com.kinggrid.iapppdf.demo.BookShower");*/
+		//æ³¨æ„ï¼šæ­¤å¤„è·³è½¬åˆ°é‡‘æ ¼æ‰‹ç­¾åŒ…
     	intent.setClassName(getApplicationContext(),
 				"com.jingye.signature.BookShower");
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -334,7 +348,7 @@ public class MainActivity extends Activity {
 //		intent.putExtra("copyRight", "SxD/phFsuhBWZSmMVtSjKZmm/c/3zSMrkV2Bbj5tznSkEVZmTwJv0wwMmH/+p6wLiUHbjadYueX9v51H9GgnjUhmNW1xPkB++KQqSv/VKLDSxD/phFsuhBWZSmMVtSjKZmm/c/3zSMrkV2Bbj5tznSkEVZmTwJv0wwMmH/+p6wLiUHbjadYueX9v51H9GgnjUhmNW1xPkB++KQqSv/VKLDsR8V6RvNmv0xyTLOrQoGzAT81iKFYb1SZ/Zera1cjGwQSq79AcI/N/6DgBIfpnlwiEiP2am/4w4+38lfUELaNFry8HbpbpTqV4sqXN1WpeJ7CHHwcDBnMVj8djMthFaapMFm/i6swvGEQ2JoygFU368sLBQG57FhM8Bkq7aPAVrvKeTdxzwi2Wk0Yn+WSxoXx6aD2yiupr6ji7hzsE6/QRx89Izb7etgW5cXVl5PwISjX+xEgRoNggvmgA8zkJXOVWEbHWAH22+t7LdPt+jENUl53rvJabZGBUtMVMHP2J32poSbszHQQyNDZrHtqZuuSgCNRP4FpYjl8hG/IVrYXSo6k2pEkUqzd5hh5kngQSOW8fXpxdRHfEuWC1PB9ruQ=");
 //		intent.putExtra("isAnnotProtect", chv_isAnnotProtect.isChecked());
 //		intent.putExtra("isSupportEbenT7Mode", sureModes());
-//		 //isSupportImmediatelyGetVector¸ù¾İĞèÒªÉèÖÃ³Étrue»òfalse,´Ë²ÎÉèÎªtrueÊ±Ê¸Á¿Ç©Åú±£´æËÙ¶È±È½Ï¿ì
+//		 //isSupportImmediatelyGetVectoræ ¹æ®éœ€è¦è®¾ç½®æˆtrueæˆ–false,æ­¤å‚è®¾ä¸ºtrueæ—¶çŸ¢é‡ç­¾æ‰¹ä¿å­˜é€Ÿåº¦æ¯”è¾ƒå¿«
 //		intent.putExtra("isSupportImmediatelyGetVector", true);
 //		intent.putExtra("saveVector", false);
 //		if (chv_fillTemplate.isChecked()) {

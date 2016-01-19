@@ -67,9 +67,6 @@
             android:name="com.jingye.upload.FileActivity"
             android:label="@string/app_name"></activity>
         <activity
-            android:name="com.jingye.upload.UploadActivity"
-            android:label="@string/app_name"></activity>
-        <activity
             android:name="com.jingye.download.MainActivity"
             android:label="@string/app_name"></activity>   
     </application>

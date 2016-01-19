@@ -21,12 +21,10 @@ public class LoginActivity extends Activity {
 		btnLogin = (Button) findViewById(R.id.btnLogin);
 		btnRegister = (Button) findViewById(R.id.btnRegister);
        
-		// ��¼
+		// 只做了跳转
 		btnLogin.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
-				EditText etPassword = (EditText) findViewById(R.id.etPassword);
-				String Password = etPassword.getText().toString();
 				
 				Intent intent = new Intent(LoginActivity.this,
 						MainActivity.class);
@@ -34,7 +32,7 @@ public class LoginActivity extends Activity {
 			}
 		});
 
-		// ע��
+		// 注册
 		btnRegister.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {

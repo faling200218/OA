@@ -1,20 +1,26 @@
 package com.jingye.download;
 
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -36,6 +42,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.jingye.user.LoginActivity;
 import com.jingye.user.R;
 
 public class MainActivity extends Activity {
@@ -47,16 +54,20 @@ public class MainActivity extends Activity {
 	private List<HashMap<String, String>> fileData;
 	private final static String SDCARD_PATH = Environment
 			.getExternalStorageDirectory().getPath().toString()+"/敬业文件/";
-	private String downloadUrl = "http://61.182.201.194:3931/CustomerSatisfaction/?requestflag=downfiles01&fid=42";
-	private String uploadUrl = "http://61.182.201.194:3931/CustomerSatisfaction/?requestflag=upfiles02";
-	//private String actionUrl = "http://61.182.203.110:8999/JingYeYunService/download.aspx";
-	StringBuffer sb;
-	//ArrayList<String> list = new ArrayList<String>();
+	private String downloadUrl = "http://61.182.203.110:8888/?Requestflag=downfiles&fid=20160122143237";
+	private String uploadUrl = "http://61.182.203.110:8888/?requestflag=upfiles02&shrshu=9";
+	//private String downloadUrl = "http://61.182.203.110:8999/JingYeYunService/download.aspx";
+	//private String uploadUrl = "http://61.182.203.110:8999/JingYeYunService/upload.aspx";
+	
 	protected int local_flag = LOCAL_FILE;
 	private final static int WEB_FILE = 0;
 	private final static int LOCAL_FILE = 1;
 	String newName ="";
-	String uploadFilePath = "";
+	File uploadFilePath;
+	
+	//多文件上传上用到的文件和文件名集合
+	Map<String, String> mapParams = new HashMap<String, String>();
+	Map<String, File> files = new HashMap<String, File>();
 	
 	//接收适配器页面传送过来的文件名=============================================
 	@SuppressLint("HandlerLeak")
@@ -64,10 +75,32 @@ public class MainActivity extends Activity {
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
-			if (msg.what == 10) { // 更改选中商品的总价
-					newName = (String) msg.obj;
-					uploadFilePath = Environment.getExternalStorageDirectory()
-					+ "/敬业文件/" + newName;
+			if (msg.what == 10) {         //适配器页面复选框选中时通知主界面将选中文件添加进集合
+				newName = (String) msg.obj;
+				uploadFilePath = new File(Environment.getExternalStorageDirectory()
+						+ "/敬业文件/" + newName);
+				files.put(newName, uploadFilePath);
+				try {
+					String urlName = URLEncoder.encode(newName,"UTF-8");  //编码，防中文乱码
+					mapParams.put(urlName, urlName);
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}else if(msg.what == 11){     //适配器页面复选框取消选中时通知主界面将反选中文件从集合中移除
+				newName = (String) msg.obj;
+				uploadFilePath = new File(Environment.getExternalStorageDirectory()
+						+ "/敬业文件/" + newName);
+				files.remove(newName);
+				try {
+					String urlName = URLEncoder.encode(newName,"UTF-8"); //编码，防中文乱码
+					mapParams.remove(urlName);
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 			}
 		}
 	};
@@ -82,8 +115,8 @@ public class MainActivity extends Activity {
     }
 
     public void findview(){
-    	//listview显示
-    	//=========================================================================
+    	
+    	//listview显示===============================================================
     	fileData = getData(SDCARD_PATH);   //bookList的数据源
         bookList = (ListView) findViewById(R.id.book_directory);
         adapter = new BookAdapter(this,handler,fileData);
@@ -106,11 +139,9 @@ public class MainActivity extends Activity {
 				
 			}
 		});
-    	//=========================================================================
-		//end listview显示
+		//end listview显示==================================================================
 		
-        //上传
-		//==========================================================================
+		//上传单击事件========================================================================
         btn_upload = (Button)findViewById(R.id.btn_upload);
         btn_upload.setOnClickListener(new OnClickListener() {
 
@@ -124,19 +155,20 @@ public class MainActivity extends Activity {
  		  		} catch (InterruptedException e1) {
  		  			e1.printStackTrace();
  		  		}
+	
  			}
  		});
-        //==========================================================================
-        //end 上传
+      //end 上传单击事件==================================================================
         
-        //下载
-        //==========================================================================
+        
+        
+      //下载单击事件======================================================================
         btn_download = (Button)findViewById(R.id.btn_download);
         btn_download.setOnClickListener(new OnClickListener() {
 
  			public void onClick(View v) {
  				//调用异步下载文件方法
- 				Asy_downloadfile asy = new Asy_downloadfile();
+ 				/*Asy_downloadfile asy = new Asy_downloadfile();
  		  		asy.execute("");
  		  		//异步耗时0.5s（此值可调）
  		  		try {
@@ -149,100 +181,112 @@ public class MainActivity extends Activity {
  				fileData = getData(SDCARD_PATH);
  				adapter = new BookAdapter(MainActivity.this,handler,fileData);
  				//adapter.setFileData(fileData);
- 				bookList.setAdapter(adapter);
+ 				bookList.setAdapter(adapter);*/
+ 				
+ 				Intent intent = new Intent(MainActivity.this,
+						DownloadActivity.class);
+				startActivity(intent);
  			}
  		});
-        //========================================================================
-        //end 下载
+      //end 下载单击事件==================================================================   
     }
-
-    //异步上传方法
+    
+    //异步多文件上传方法=======================================================================
     public class Asy_upload extends AsyncTask<Object, Object, Object> {
 		@Override
-		protected Object doInBackground(Object... params) {
-			String end = "\r\n";
-	        String twoHyphens = "--";
-	        String boundary = "*****";
-	     
-	        try
-	        {
-	          URL url =new URL(uploadUrl);
-	          HttpURLConnection con=(HttpURLConnection)url.openConnection();
-	           //允许Input、Output，不使用Cache 
-	          con.setDoInput(true);
-	          con.setDoOutput(true);
-	          con.setUseCaches(false);
-	           //设置传送的method=POST 
-	          con.setRequestMethod("POST");
-	           //setRequestProperty 
-	          con.setRequestProperty("Connection", "Keep-Alive");
-	          con.setRequestProperty("Charset", "UTF-8");
-	          con.setRequestProperty("Content-Type",
-	                             "multipart/form-data;boundary="+boundary);
+		protected Object doInBackground(Object... params) {     
+			
+			String BOUNDARY = java.util.UUID.randomUUID().toString();
+			String PREFIX = "--", LINEND = "\r\n";
+			String MULTIPART_FROM_DATA = "multipart/form-data";
+			String CHARSET = "UTF-8";
+
+			try{
+			URL uri = new URL(uploadUrl);
+			HttpURLConnection conn = (HttpURLConnection) uri.openConnection();
+			conn.setReadTimeout(20 * 1000); // 缓存的最长时间
+			conn.setDoInput(true);// 允许输入
+			conn.setDoOutput(true);// 允许输出
+			conn.setUseCaches(false); // 不允许使用缓存
+			conn.setRequestMethod("POST");
+			conn.setRequestProperty("connection", "keep-alive");
+			conn.setRequestProperty("Charsert", "UTF-8");
+			conn.setRequestProperty("Content-Type", MULTIPART_FROM_DATA
+					+ ";boundary=" + BOUNDARY);
+
+			// 首先组拼文本类型的参数
+			StringBuilder sb = new StringBuilder();
+			for (Map.Entry<String, String> entry : mapParams.entrySet()) {
+				sb.append(PREFIX);
+				sb.append(BOUNDARY);
+				sb.append(LINEND);
+				sb.append("Content-Disposition: form-data; name=\""
+						+ entry.getKey() + "\"" + LINEND);
+				sb.append("Content-Type: text/plain; charset=" + CHARSET + LINEND);
+				sb.append("Content-Transfer-Encoding: 8bit" + LINEND);
+				sb.append(LINEND);
+				sb.append(entry.getValue());
+				sb.append(LINEND);
+			}
+			
 	           //设置DataOutputStream 
 	          DataOutputStream ds = 
-	            new DataOutputStream(con.getOutputStream());
-	          ds.writeBytes(twoHyphens + boundary + end );
-	          //上传文件名时要编码，要不然服务端文件名会乱码
-	          //===================================================
-	          try {
-					newName = URLEncoder.encode(newName,"UTF-8");
-				} catch (UnsupportedEncodingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-	          //====================================================
-	          ds.writeBytes("Content-Disposition: form-data; " +
-	                        "name=\"file1\";filename=\"" +
-	                      newName+"\"" + end);
-	          ds.writeBytes(end);   
+	            new DataOutputStream(conn.getOutputStream());
+	          ds.write(sb.toString().getBytes());
 
-	           //取得文件的FileInputStream 
-	          FileInputStream fStream = new FileInputStream(uploadFilePath);
-	           //设置每次写入1024bytes 
-	          int bufferSize = 2048;
-	          byte[] buffer = new byte[bufferSize];
-
-	          int length = -1;
-	          // 从文件读取数据至缓冲区 
-	          while((length = fStream.read(buffer)) != -1)
-	          {
-	            // 将资料写入DataOutputStream中 
-	            ds.write(buffer, 0, length);
-	            System.out.println("正在上传："+length);
-	          }
-	          ds.writeBytes(end);
-	          ds.writeBytes(twoHyphens + boundary + twoHyphens + end);
-
-	           //close streams 
-	          fStream.close();
-	          ds.flush();
-
-	           //取得Response内容 
-	          InputStream is = con.getInputStream();
-	          int ch;
-	          StringBuffer b =new StringBuffer();
-	          while( ( ch = is.read() ) != -1 )
-	          {
-	            b.append( (char)ch );
-	          }
-	          onDestroy();
-	           //将Response显示于Dialog（将这行注释，主要是因为在异步里面调用对话框会报错，原因未知）
-	          //showDialog("上传成功"+b.toString().trim());
-	          System.out.println("上传成功"+b.toString().trim());
-	          // 关闭DataOutputStream 
-	          ds.close();
+	          //发送文件数据
+	          if(files!=null){
+	        	  for(Map.Entry<String, File>file:files.entrySet()){
+	        		StringBuilder sb1 = new StringBuilder();
+	        		sb1.append(PREFIX);
+	  				sb1.append(BOUNDARY);
+	  				sb1.append(LINEND);
+	  				sb1.append("Content-Disposition: form-data; name=\"file\"; filename=\""
+	  								+ file.getKey() + "\"" + LINEND);
+	  				sb1.append("Content-Type: application/octet-stream; charset="
+	  						+ CHARSET + LINEND);
+	  				sb1.append(LINEND);
+	  				ds.write(sb1.toString().getBytes());
+	  				FileInputStream fStream = new FileInputStream(file.getValue());
+	  				byte[] buffer = new byte[10240];
+					int len = 0;
+					while ((len = fStream.read(buffer)) != -1) {
+						ds.write(buffer, 0, len);
+					}
+					
+					fStream.close();
+					ds.write(LINEND.getBytes());
+	        	  }
+	        	// 请求结束标志
+	      		byte[] end_data = (PREFIX + BOUNDARY + PREFIX + LINEND).getBytes();
+	      		Log.d(TAG,end_data.toString());
+	      		ds.write(end_data);
+	      		ds.flush();
+	      		// 得到响应码
+	      		int res = conn.getResponseCode();
+	      		if (res == 200) {
+	      			InputStream is = conn.getInputStream();
+	    			int ch;
+	    			StringBuilder sb2 = new StringBuilder();
+	    			while ((ch = is.read()) != -1) {
+	    				sb2.append((char) ch);
+	    			}
+	    			System.out.println("上传成功"+sb2.toString().trim());
+	    		}
+	      		ds.close();
+	    		conn.disconnect();
 	        }
-	        catch(Exception e)
-	        {
-	            //showDialog("上传失败"+e);
-	        	System.out.println("上传失败"+e);
-	        }
+			}catch(Exception e)
+		    {
+		        //showDialog("上传失败"+e);
+		    	System.out.println("上传失败"+e);
+		    }
 			return true;
 		}
-	}
-	
-	//异步下载文件
+    }
+    //end 异步多文件上传方法================================================================================
+    
+	//异步下载文件方法==============================================================================
 	public class Asy_downloadfile extends AsyncTask<Object, Object, Object> {
   		@Override
   		protected Object doInBackground(Object... params) {	
@@ -301,8 +345,9 @@ public class MainActivity extends Activity {
             return true;
   		}
   	}
+	//end 异步下载文件方法====================================================================
 	
-	  /* 显示Dialog的method */
+	  /* 显示Dialog的method ,暂时没有使用*/
     private void showDialog(String mess)
     {
       new AlertDialog.Builder(MainActivity.this).setTitle("上传结果")

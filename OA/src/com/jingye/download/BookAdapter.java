@@ -81,7 +81,7 @@ public BookAdapter(Context context,Handler mHandler,List<HashMap<String, String>
     }
     //这一句比较长，只是控制文件名的显示，拼接字符串
     holder.fileName.setText(fileData.get(position).get(
-        "filename").substring(0,fileData.get(position).get("filename").lastIndexOf(".")).length()>13?fileData.get(position).get("filename").substring(0, 13)+"...":fileData.get(position).get("filename").substring(0, fileData.get(position).get("filename").lastIndexOf(".")));
+        "filename").substring(0,fileData.get(position).get("filename").lastIndexOf(".")).length()>11?fileData.get(position).get("filename").substring(0, 11)+"...":fileData.get(position).get("filename").substring(0, fileData.get(position).get("filename").lastIndexOf(".")));
     holder.cbfile.setTag(position);   //复选框标签和文件名位置序号一致，这样后面就可以根据选中复选框来得到文件名
     //holder.cbfile.setChecked(getIsSelected().get(position));
     holder.cbfile.setOnCheckedChangeListener(new CheckBoxChangedListener());
@@ -97,12 +97,10 @@ public BookAdapter(Context context,Handler mHandler,List<HashMap<String, String>
 			if(flag){
 				filename = fileData.get(position).get("filename");
 				mHandler.sendMessage(mHandler.obtainMessage(10, filename));  //将文件名发送到主界面
+			}else {
+				filename = fileData.get(position).get("filename");
+				mHandler.sendMessage(mHandler.obtainMessage(11, filename));
 			}
-			//还没有实现多文件上传功能，这一步先不用
-			//else {
-			//	filename = fileData.get(position).get("filename");
-			//	mHandler.sendMessage(mHandler.obtainMessage(11, filename));
-			//}
 
 		}
 	}

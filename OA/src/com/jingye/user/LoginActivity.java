@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.jingye.download.MainActivity;
+import com.jingye.process.MyProcess;
 
 public class LoginActivity extends Activity {
 
@@ -26,8 +27,10 @@ public class LoginActivity extends Activity {
 
 			public void onClick(View v) {
 				
+				//Intent intent = new Intent(LoginActivity.this,
+				//		MainActivity.class);
 				Intent intent = new Intent(LoginActivity.this,
-						MainActivity.class);
+						MyProcess.class);
 				startActivity(intent);
 			}
 		});

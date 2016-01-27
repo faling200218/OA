@@ -11,6 +11,7 @@
 
     <string name="upload">上传</string>
     <string name="download">下载</string>
+    <string name="file_download">文档下载</string>
     <string name="signature">签名</string>
     <string name="signature_delete">删除签名</string>
     <string name="full_signature">全文批注</string>

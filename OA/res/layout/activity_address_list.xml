@@ -3,21 +3,52 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
- 
-<TextView
-    android:id="@+id/tv_download"
+    
+<RelativeLayout 
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:text="组织架构"
-    android:padding="5dp"
-    android:background="#52C1F8"
-    android:textColor="#FFFFFF"
-    android:textSize="20sp"></TextView>    
+    android:padding="2dp"
+    android:background="#E1E6F6">
+    
+    <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/first"
+        android:textSize="20sp"
+        android:text="董事会"/>
+    <ImageView 
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_toRightOf="@+id/first"
+        android:layout_centerVertical="true"
+        android:id="@+id/separator"
+        android:src="@drawable/dpzs_icon13"/>"
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_toRightOf="@+id/separator"
+        android:id="@+id/second"
+        android:text="董事长"/>
+
+    <Button
+        android:id="@+id/btn_select"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:background="#52C1F8"
+        android:padding="1dp"
+        android:text="选择完毕"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp" />
+ 
+</RelativeLayout>
 
 <ListView
        android:id="@+id/lv_address_list"
        android:layout_width="match_parent"
-       android:layout_height="wrap_content"
+       android:layout_height="match_parent"
        android:layout_marginBottom="10dp"
        android:fastScrollEnabled="true"
        android:scrollingCache="true">

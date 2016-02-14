@@ -1,6 +1,5 @@
 package com.jingye.process;
 
-import com.jingye.download.MainActivity.Asy_upload;
 import com.jingye.user.R;
 import android.app.Activity;
 import android.content.Intent;
@@ -27,7 +26,7 @@ public class MyProcess extends Activity {
 		btnCreat.setOnClickListener(new OnClickListener() {
 
  			public void onClick(View v) {
- 				Intent intent = new Intent(MyProcess.this,Organization.class);
+ 				Intent intent = new Intent(MyProcess.this,CreatProcess.class);
  				startActivity(intent);
 	
  			}

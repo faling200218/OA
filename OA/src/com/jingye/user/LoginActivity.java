@@ -8,7 +8,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.jingye.download.MainActivity;
+import com.jingye.download.FileActivity;
 import com.jingye.process.MyProcess;
 
 public class LoginActivity extends Activity {

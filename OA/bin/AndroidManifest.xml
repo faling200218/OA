@@ -67,7 +67,7 @@
             android:name="com.jingye.upload.FileActivity"
             android:label="@string/app_name"></activity>
         <activity
-            android:name="com.jingye.download.MainActivity"
+            android:name="com.jingye.download.FileActivity"
             android:label="@string/app_name"></activity> 
         <activity
             android:name="com.jingye.download.DownloadActivity"
@@ -77,7 +77,10 @@
             android:label="@string/app_name"></activity> 
         <activity
             android:name="com.jingye.process.Organization"
-            android:label="@string/app_name"></activity> 
+            android:label="@string/app_name"></activity>
+        <activity 
+            android:name="com.jingye.process.CreatProcess"
+            android:label="@string/app_name"></activity>
     </application>
 
 </manifest>

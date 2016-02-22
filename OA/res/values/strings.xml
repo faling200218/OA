@@ -86,4 +86,73 @@
     <string name="btn_save">保存</string>
     <string name="btn_no_save">不保存</string>
     
+    <!-- 佳荣写的 -->  
+    <!-- +++ -->
+    <string name="tv_building">维护中....</string>
+    
+    <string name="hint1">请输入您的账号</string>
+    <string name="hint2">请输入您的密码</string>
+    <string name="hint3">请再次输入密码</string>
+    <string name="btn_login">登  录</string>
+    <string name="btn_regist">注  册</string>
+    <string name="btn_complete">完成</string>
+    <string name="net_err">网络请求失败</string>
+    <string name="sign">扫描二维码签到</string>
+    <string name="savepwd">记住密码</string>
+    <string name="sign_complete">签到成功！</string>
+    <string name="tv_checkin">上班</string>
+    <string name="tv_checkout">下班</string>
+    <string name="btn_checkin">签到</string>
+    <string name="btn_checkout">签退</string>
+    
+    <string name="sign_title_result">签到结果</string>
+    <string name="hyqd">会议签到</string>
+    <string name="ydqd">移动签到</string>
+    <string name="jtbb">集团报表</string>
+    <string name="xyy">新应用</string>
+    
+    <string name="tab_process">移动办公</string>
+    <string name="tab_address">通讯录</string>
+    <string name="tab_app">应用</string>
+    <string name="tab_personcenter">个人中心</string>
+    <string name="tv_process_manage">审批流程管理</string>
+    <string name="tv_backapp">&lt;&#160;&#160;应用</string>
+    <string name="tv_back">&lt;&#160;&#160;返回</string>
+    <string name="tv_personal">个人信息</string>
+    <string name="tv_staffname1">用户名</string>
+    <string name="tv_staffname2">张某某</string>
+    <string name="tv_staffid1">编&#160;&#160;&#160;&#160;号</string>
+    <string name="tv_staffid2">000000</string>
+    <string name="tv_posname1">职&#160;&#160;&#160;&#160;称</string>
+    <string name="tv_posname2">科员</string>
+    <string name="tv_orgname1">部&#160;&#160;&#160;&#160;门</string>
+    <string name="tv_orgname2">互联网信息部</string>
+    <string name="tv_company1">公&#160;&#160;&#160;&#160;司</string>
+    <string name="tv_company2">河北敬业集团</string>
+    <string name="tv_xsbb">销售报表</string>
+    <string name="tv_htcx">合同查询</string>
+    <string name="tv_xsrb">销售日报</string>
+    <string name="tv_xssk">销售收款</string>
+    <string name="tv_cwbb">财务报表</string>
+    <string name="tv_szcx">收支查询</string>
+    <string name="tv_companyname">河北敬业集团</string>
+    <string name="tv_week">星期三</string>
+    <string name="btn_signlog">签到记录</string>
+    <string name="tv_date">2015-11-25</string>
+    
+    <string name="tv_daiban">我待办的流程</string>
+    <string name="tv_faqi">我发起的流程</string>
+    <string name="tv_shenpi">我审批的流程</string>
+    <string name="tv_canyu">我参与的流程</string>
+    <string name="tv_jiaoban">我交办的流程</string>
+    
+    
+    <string name="process_list_item_processname">流程名：</string>
+    <string name="process_list_item_fname">发起人：</string>
+    <string name="process_list_item_degree">紧急程度：</string>
+    <string name="process_list_item_postriqi">发起日期：</string>
+    <string name="process_list_item_flag">审批状态：</string>
+    <!-- ++++ -->
+  
+   
 </resources>

@@ -9,27 +9,6 @@
     android:layout_height="wrap_content"
     android:padding="2dp"
     android:background="#E1E6F6">
-    
-    <TextView 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/first"
-        android:textSize="20sp"
-        android:text="董事会"/>
-    <ImageView 
-        android:layout_width="18dp"
-        android:layout_height="18dp"
-        android:layout_toRightOf="@+id/first"
-        android:layout_centerVertical="true"
-        android:id="@+id/separator"
-        android:src="@drawable/dpzs_icon13"/>"
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:layout_toRightOf="@+id/separator"
-        android:id="@+id/second"
-        android:text="董事长"/>
 
     <Button
         android:id="@+id/btn_select"
@@ -47,10 +26,11 @@
 
 <ListView
        android:id="@+id/lv_address_list"
+       android:choiceMode="singleChoice"
        android:layout_width="match_parent"
        android:layout_height="match_parent"
        android:layout_marginBottom="10dp"
        android:fastScrollEnabled="true"
        android:scrollingCache="true">
-        </ListView>
+       </ListView>
 </LinearLayout>

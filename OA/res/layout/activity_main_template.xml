@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <TextView
+        android:id="@+id/tv_title_process"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_title55dp"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="模板维护"
+        android:textSize="@dimen/tv_title20sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/title_line" />
+    
+    <Button 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_system"
+        android:text="系统模板"
+        android:background="@drawable/bg_edittext"
+	   	android:padding="10dp"
+		android:textColorHint="#AAAAAA"
+		android:textSize="18dp"
+		android:singleLine="true"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_my"
+        android:text="我的模板"
+        android:background="@drawable/bg_edittext"
+	   	android:padding="10dp"
+		android:textColorHint="#AAAAAA"
+		android:textSize="18dp"
+		android:singleLine="true"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"/>
+    <Button 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="小组列表"
+        android:id="@+id/btn_group"
+        android:background="@drawable/bg_edittext"
+	   	android:padding="10dp"
+		android:textColorHint="#AAAAAA"
+		android:textSize="18dp"
+		android:singleLine="true"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"/>
+    
+</LinearLayout>

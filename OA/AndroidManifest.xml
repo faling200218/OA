@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="19"
+        android:minSdkVersion="8"
         android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -29,6 +29,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <!--登录界面  -->
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name" >
@@ -63,23 +64,41 @@
                 <data android:pathPattern=".*\\.pdf" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.jingye.upload.FileActivity"
-            android:label="@string/app_name"></activity>
+        <!--选择需要上传的文件  -->
         <activity
             android:name="com.jingye.download.FileActivity"
             android:label="@string/app_name"></activity> 
+        <!--下载文件  -->
         <activity
             android:name="com.jingye.download.DownloadActivity"
             android:label="@string/app_name"></activity> 
+        <!--主界面 -->    
         <activity
             android:name="com.jingye.process.MyProcess"
             android:label="@string/app_name"></activity> 
+        <!--组织机构  -->
         <activity
             android:name="com.jingye.process.Organization"
             android:label="@string/app_name"></activity>
+        <!--新建流程  -->
         <activity 
             android:name="com.jingye.process.CreatProcess"
+            android:label="@string/app_name"></activity>
+        <!--模板维护主界面  -->
+        <activity 
+            android:name="com.jingye.template.CreatTemplate"
+            android:label="@string/app_name"></activity>
+        <!--我的模板  -->
+        <activity
+            android:name="com.jingye.template.ProcessTemplate"
+            android:label="@string/app_name"></activity>
+        <!--模板详情  -->
+        <activity 
+            android:name="com.jingye.template.TemplateDetail"
+            android:label="@string/app_name"></activity>
+        <!--佳荣的  -->
+        <activity
+            android:name="com.jingye.process.MyBaseActivity"
             android:label="@string/app_name"></activity>
     </application>
 

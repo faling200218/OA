@@ -48,6 +48,7 @@ public class Organization extends Activity{
 	HashMap<String, String> map = null;
 	private Button btn_select;
 	private String processidString="";
+	private String backUrl="";
 	
 	//将适配器页面传过来的领导名字存起来
 	ArrayList<String> leaders = new ArrayList<String>();
@@ -92,6 +93,39 @@ public class Organization extends Activity{
 		findview();
 	}
 
+	@Override
+	public void onBackPressed() {
+//		if (currentLevel == LEVEL_COUNTY) {
+//		   queryCities();
+//		} else if (currentLevel == LEVEL_CITY) {
+//		   queryProvinces();
+//		} else {
+//		   finish();
+//		}
+		
+		strWhere = strWhere.substring(0,strWhere.length()-1);  //去掉一个"！"
+		System.out.println("========="+strWhere);
+		if(strWhere.contains("!")){
+			strWhere = strWhere.substring(0,strWhere.lastIndexOf("!")+1);  //前面去掉了一个，就成了截取倒数第二个！前面的串
+			int i = count(strWhere);
+			Log.v(TAG, "层参数："+i);
+		    strFloor = "floorn="+i;
+		    backUrl="http://61.182.203.110:8888/?Requestflag=Lookingsomeone";
+		    backUrl += "&"+strFloor+"&"+strWhere;
+		    Log.v(TAG+"返回键得到的：",backUrl);
+			getjson(backUrl);
+		}else if(!strWhere.contains("!")&&!strWhere.equals("wherestr")){
+			backUrl = "http://61.182.203.110:8888/?Requestflag=newprocess";
+			strWhere="wherestr=";    //重置查询条件
+			Log.v(TAG+"返回键得到的：",backUrl);
+			getjson(backUrl);
+		} 
+		else if (strWhere.equals("wherestr")) {
+			finish();
+		}
+		
+	}
+	
 	public void findview(){
 		btn_select=(Button)findViewById(R.id.btn_select);
 		btn_select.setOnClickListener(new OnClickListener() {
@@ -130,8 +164,8 @@ public class Organization extends Activity{
 	     						public void onSuccess(Object result) {
 	     							// 访问服务器成功，获得访问结果result
 	     							str = (String) result;
-	     							Log.v(TAG,"请求结果(json串)" + result);
-	     							Log.v(TAG,"str====" + str);
+	     							//Log.v(TAG,"请求结果(json串)" + result);
+	     							//Log.v(TAG,"str====" + str);
 	     							// ++++++++++++解析数据++++++++++++++++++++++++++++++
 	     							try {
 	     								listmap = new ArrayList<HashMap<String, String>>();
@@ -157,7 +191,7 @@ public class Organization extends Activity{
 	     										//Log.v(TAG,jo.getString("fsystem"));
 	     										//System.out.println("listmap-->>" + listmap);
 	     									}
-	     									System.out.println("listmap1-->>" + listmap);
+	     									//System.out.println("listmap1-->>" + listmap);
 	     								} else {
 	     									Log.v(TAG,"data无值,为=" + data);
 	     								}
@@ -174,7 +208,7 @@ public class Organization extends Activity{
 	     				   			public void onItemClick(AdapterView<?> parent, View view,
 	     				   					int position, long id) {
 
-	     				   				Log.v(TAG,"机构名："+listmap.get(position).get("fsystem"));
+	     				   				//Log.v(TAG,"机构名："+listmap.get(position).get("fsystem"));
 	     				   				if(listmap.get(position).get("lx").toString().equals("1")){
 		     				   				strWhere += listmap.get(position).get("fsystem")+"!";
 		     				   			    Log.v(TAG,"查询条件参数："+strWhere);
@@ -186,14 +220,7 @@ public class Organization extends Activity{
 		     				   			    
 		     				   				Log.v(TAG, "拼接好的链接："+Url);
 	     				   					getjson(Url);
-	     				   				}else {
-											
-										}
-	     				   				
-
-	     				   			    
-	     				   				
-	     				   				
+	     				   				}	
 	     				   			}
 	     				   		});
 	     						}

@@ -69,7 +69,10 @@
 			android:textColorHint="#AAAAAA"
 			android:textSize="18dp"
 	        android:layout_gravity="center"
-	        android:layout_margin="10dp"
+	        android:layout_marginLeft="10dp"
+	        android:layout_marginRight="10dp"
+	        android:layout_marginTop="10dp"
+	        android:layout_marginBottom="3dp"
 	        android:hint="请输入流程内容"
 	        android:gravity="top|left" 
 	        android:lineSpacingExtra="1dp"
@@ -98,28 +101,45 @@
 	        android:layout_gravity="center"
 	        android:layout_marginLeft="10dp"
 	        android:layout_marginRight="10dp"/>
-      
-     <EditText 
-         android:layout_width="match_parent" 
+        
+        <Button  
+         android:layout_width="wrap_content" 
          android:layout_height="wrap_content" 
-         android:id="@+id/et_sign" 
-         android:layout_below="@+id/tv_level" 
-         android:textSize="18sp"
+         android:text="审批人:" 
+         android:padding="10dp"
+         android:drawableLeft="@drawable/plus1"
+         android:layout_below="@+id/tv_level"
+         android:textSize="20sp" 
+         android:id="@+id/btn_signer"
          android:background="@drawable/bg_edittext"
-	   	 android:padding="10dp"
 		 android:textColorHint="#AAAAAA"
          android:layout_gravity="center"
-         android:layout_margin="10dp"
-         android:hint="请输入审批人"
-	     android:gravity="top|left" 
-	     android:lineSpacingExtra="1dp"
-	     android:minLines="2"/> 
+         android:layout_marginLeft="10dp"
+         android:layout_marginBottom="3dp"
+         android:layout_marginTop="5dp"/>
+        
+        <GridView 
+ 	        android:layout_width="wrap_content" 
+ 	        android:layout_height="50dp" 
+ 	        android:id="@+id/gv_signer"
+ 	        android:layout_alignLeft="@+id/spinner_level"
+ 	        android:layout_toRightOf="@+id/btn_signer"
+ 	        android:layout_below="@+id/tv_level" 
+            android:textSize="18sp"
+            android:background="@drawable/bg_edittext"
+	   	    android:padding="5dp"
+	   	    android:numColumns="3"
+		    android:textColorHint="#AAAAAA"
+            android:layout_gravity="center"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"/> 
           
      <EditText 
          android:layout_width="match_parent" 
          android:layout_height="wrap_content" 
          android:id="@+id/et_file" 
-         android:layout_below="@+id/et_sign"
+         android:layout_below="@+id/btn_signer"
          android:textSize="18sp"
          android:background="@drawable/bg_edittext"
 	   	 android:padding="10dp"

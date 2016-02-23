@@ -1,6 +1,7 @@
-package com.jingye.process;
+package com.jingye.main;
 
-import com.jingye.template.CreatTemplate;
+import com.jingye.process.CreatProcess;
+import com.jingye.template.TemplateMain;
 import com.jingye.template.ProcessTemplate;
 import com.jingye.user.R;
 import android.app.Activity;
@@ -48,7 +49,7 @@ public class MyProcess extends MyBaseActivity {
 		
 		 public void onClick(View v) {
 				 Intent intent = new Intent(MyProcess.this,
-				 CreatTemplate.class);
+				 TemplateMain.class);
 				 startActivity(intent);
 			 }
 		 });

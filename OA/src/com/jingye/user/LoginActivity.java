@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.jingye.download.FileActivity;
-import com.jingye.process.MyProcess;
+import com.jingye.main.MyProcess;
 
 public class LoginActivity extends Activity {
 

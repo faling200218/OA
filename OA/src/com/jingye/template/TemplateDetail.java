@@ -1,5 +1,6 @@
 package com.jingye.template;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -10,7 +11,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.jingye.process.U;
+import com.jingye.main.MyApplication;
+import com.jingye.main.U;
 import com.jingye.user.R;
 
 import android.app.Activity;
@@ -19,7 +21,9 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -31,26 +35,31 @@ public class TemplateDetail extends Activity{
 	private TextView signerTextView;
 	private String gidString;
 	private String nameString;
+	private String urlString;
+	private Button delButton;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.template_detail);
-		getjson();
-		initView();
-	}
-	
-	// 获取json数据====================================
-	@SuppressWarnings("unchecked")
-	public void getjson(){
+		
 		Intent intent = getIntent();
 		gidString = intent.getStringExtra("gid");
 		Log.v(TAG,"gidString========="+gidString);
 		nameString = intent.getStringExtra("groupname");
 		System.out.println("gid=========="+gidString);
+		MyApplication app = (MyApplication)getApplication();
+		urlString=app.getName()+"Requestflag=listmbgroupspr&gid="+gidString; 
+		getjson(urlString);
+		initView();
+	}
+	
+	// 获取json数据====================================
+	@SuppressWarnings("unchecked")
+	public void getjson(String url){
 		FinalHttp fh = new FinalHttp(); 
 	     		try {
-	     			fh.get( "http://61.182.203.110:8888/?Requestflag=listmbgroupspr&gid="+gidString,
+	     			fh.get( urlString,
 	     					new AjaxCallBack() {
 	     						@Override
 	     						public void onStart() {
@@ -74,11 +83,10 @@ public class TemplateDetail extends Activity{
 	     							try {
 	     								//listmap = new ArrayList<HashMap<String, String>>();
 	     								JSONObject jsonObject = new JSONObject(str);
-
-	     								String data = jsonObject.getString("data");
-
-	     								JSONArray jsonArray = new JSONArray(data);
-	     								if (jsonArray.length() > 0) {
+    								
+	     								if (str.contains("data")) {
+	     									String data = jsonObject.getString("data");	
+	     									JSONArray jsonArray = new JSONArray(data);
 	     									String shenpirenString = "";
 	     									for (int i = 0; i < jsonArray.length(); i++) {
 	     										//map = new HashMap<String, String>();
@@ -95,7 +103,8 @@ public class TemplateDetail extends Activity{
 	     									nameTextView.setText(nameString);
      										signerTextView.setText(shenpirenString);
 	     								} else {
-	     									Log.v(TAG,"data无值,为=" + data);
+	     									//Log.v(TAG,"data无值,为=" + data);
+	     									U.toast(TemplateDetail.this,"删除成功！");
 	     								}
 	     							} catch (JSONException e) {
 	     								e.printStackTrace();
@@ -121,6 +130,15 @@ public class TemplateDetail extends Activity{
 		
 		nameTextView = (TextView)findViewById(R.id.tv_name);
 		signerTextView = (TextView)findViewById(R.id.tv_signer);
+		delButton = (Button)findViewById(R.id.btn_del);
+		delButton.setOnClickListener(new OnClickListener() {
+			
+			 public void onClick(View v) {
+				     MyApplication app = (MyApplication)getApplication();
+					 urlString = app.getName()+"Requestflag=delmbgroup&gid="+gidString;
+					 getjson(urlString);
+				 }
+			 });
 	}
 
 	

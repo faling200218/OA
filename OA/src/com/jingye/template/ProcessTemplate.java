@@ -11,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.jingye.main.MyApplication;
 import com.jingye.user.R;
 
 import android.app.Activity;
@@ -41,9 +42,11 @@ public class ProcessTemplate extends Activity{
 	// 获取json数据====================================
 		@SuppressWarnings("unchecked")
 		public void getjson(){
+			MyApplication app = (MyApplication)getApplication();
+			String urlString = app.getName()+"Requestflag=listmbgroup&groupstype=1&groupcreatetype=2&createuser=029848";
 			FinalHttp fh = new FinalHttp(); 
 		     		try {
-		     			fh.get( "http://61.182.203.110:8888/?Requestflag=listmbgroup&groupstype=1&groupcreatetype=2&createuser=029848",
+		     			fh.get( urlString,
 		     					new AjaxCallBack() {
 		     						@Override
 		     						public void onStart() {

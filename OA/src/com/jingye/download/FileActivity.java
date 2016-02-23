@@ -43,6 +43,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.jingye.main.MyApplication;
 import com.jingye.process.CreatProcess;
 import com.jingye.user.LoginActivity;
 import com.jingye.user.R;
@@ -56,9 +57,11 @@ public class FileActivity extends Activity {
 	private List<HashMap<String, String>> fileData;
 	private final static String SDCARD_PATH = Environment
 			.getExternalStorageDirectory().getPath().toString()+"/敬业文件/";
-	private String downloadUrl = "http://61.182.203.110:8888/?Requestflag=downfiles&fid=20160122143237";
+	MyApplication app;
+	//String urlPath = app.getName() + "requestflag=listfiles";
+	private String downloadUrl = "";
 	//private String uploadUrl = "http://61.182.203.110:8888/?requestflag=upfiles02&shrshu=9";
-	private String uploadUrl ="http://61.182.203.110:8888/?requestflag=upfiles02&processid=2016010123";
+	private String uploadUrl = "";
 	//private String downloadUrl = "http://61.182.203.110:8999/JingYeYunService/download.aspx";
 	//private String uploadUrl = "http://61.182.203.110:8999/JingYeYunService/upload.aspx";
 	
@@ -117,7 +120,9 @@ public class FileActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file);
-        
+        app = (MyApplication)getApplication();
+        downloadUrl = app.getName()+"Requestflag=downfiles&fid=20160122143237";
+        uploadUrl = app.getName()+"requestflag=upfiles02&processid=2016010123";
         findview();
     }
 

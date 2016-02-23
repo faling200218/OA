@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp" >
+
+            <TextView
+                android:id="@+id/tv_templateName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/et_templateName"
+                android:padding="10dp"
+                android:text="模板名称："
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/et_templateName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:layout_toRightOf="@+id/tv_templateName"
+                android:background="@drawable/bg_edittext"
+                android:padding="10dp"
+                android:singleLine="true"
+                android:textColorHint="#AAAAAA"
+                android:textSize="18dp" />
+        </RelativeLayout>
+
+<RadioGroup
+    android:id="@+id/radioGroup1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" 
+    android:padding="10dp" >
+
+    <RadioButton
+        android:id="@+id/radio_sys"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:textSize="20sp"
+        android:padding="10dp" 
+        android:text="系统模板" />
+
+    <RadioButton
+        android:id="@+id/radio_my"
+        android:padding="10dp" 
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="我的模板" />
+</RadioGroup>
+        <TextView
+            android:id="@+id/tv_signer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_marginLeft="10dp"
+            android:text="审批人："
+            android:textSize="20sp" />
+</LinearLayout>
+</ScrollView>
+</LinearLayout>

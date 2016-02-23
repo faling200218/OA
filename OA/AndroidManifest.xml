@@ -25,6 +25,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
     
     <application
+        android:name="com.jingye.main.MyApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -74,7 +75,7 @@
             android:label="@string/app_name"></activity> 
         <!--主界面 -->    
         <activity
-            android:name="com.jingye.process.MyProcess"
+            android:name="com.jingye.main.MyProcess"
             android:label="@string/app_name"></activity> 
         <!--组织机构  -->
         <activity
@@ -85,6 +86,10 @@
             android:name="com.jingye.process.CreatProcess"
             android:label="@string/app_name"></activity>
         <!--模板维护主界面  -->
+        <activity 
+            android:name="com.jingye.template.TemplateMain"
+            android:label="@string/app_name"></activity>
+        <!--新建模板  -->
         <activity 
             android:name="com.jingye.template.CreatTemplate"
             android:label="@string/app_name"></activity>
@@ -98,7 +103,7 @@
             android:label="@string/app_name"></activity>
         <!--佳荣的  -->
         <activity
-            android:name="com.jingye.process.MyBaseActivity"
+            android:name="com.jingye.main.MyBaseActivity"
             android:label="@string/app_name"></activity>
     </application>
 

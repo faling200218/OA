@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import com.jingye.download.DownloadActivity;
 import com.jingye.download.DownloadAdapter;
+import com.jingye.main.MyApplication;
 import com.jingye.user.R;
 
 import android.R.integer;
@@ -87,8 +88,8 @@ public class Organization extends Activity{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_address_list);
-		
-		String strUrl = "http://61.182.203.110:8888/?Requestflag=newprocess";
+		MyApplication app = (MyApplication)getApplication();
+		String strUrl = app.getName()+"Requestflag=newprocess";
 		getjson(strUrl);
 		findview();
 	}
@@ -105,17 +106,18 @@ public class Organization extends Activity{
 		
 		strWhere = strWhere.substring(0,strWhere.length()-1);  //去掉一个"！"
 		System.out.println("========="+strWhere);
+		MyApplication app = (MyApplication)getApplication();
 		if(strWhere.contains("!")){
 			strWhere = strWhere.substring(0,strWhere.lastIndexOf("!")+1);  //前面去掉了一个，就成了截取倒数第二个！前面的串
 			int i = count(strWhere);
 			Log.v(TAG, "层参数："+i);
 		    strFloor = "floorn="+i;
-		    backUrl="http://61.182.203.110:8888/?Requestflag=Lookingsomeone";
+		    backUrl=app.getName()+"Requestflag=Lookingsomeone";
 		    backUrl += "&"+strFloor+"&"+strWhere;
 		    Log.v(TAG+"返回键得到的：",backUrl);
 			getjson(backUrl);
 		}else if(!strWhere.contains("!")&&!strWhere.equals("wherestr")){
-			backUrl = "http://61.182.203.110:8888/?Requestflag=newprocess";
+			backUrl = app.getName()+"Requestflag=newprocess";
 			strWhere="wherestr=";    //重置查询条件
 			Log.v(TAG+"返回键得到的：",backUrl);
 			getjson(backUrl);

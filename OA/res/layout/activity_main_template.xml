@@ -21,6 +21,18 @@
     <Button 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/btn_creat"
+        android:text="新增模板"
+        android:background="@drawable/bg_edittext"
+	   	android:padding="10dp"
+		android:textColorHint="#AAAAAA"
+		android:textSize="18dp"
+		android:singleLine="true"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"/>
+    <Button 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/btn_system"
         android:text="系统模板"
         android:background="@drawable/bg_edittext"

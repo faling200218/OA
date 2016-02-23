@@ -22,6 +22,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.jingye.download.FileActivity;
+import com.jingye.main.MyApplication;
+import com.jingye.main.U;
 import com.jingye.user.R;
 
 import android.R.string;
@@ -39,6 +41,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
@@ -52,9 +55,11 @@ public class CreatProcess extends Activity{
 	Map<String, String> mapParams = new HashMap<String, String>();
 	Map<String, File> files = new HashMap<String, File>();
 	List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+	List<HashMap<String,String>> myleaderList = new ArrayList<HashMap<String,String>>();
 	private EditText topicEditText;
 	private EditText contentEditText;
-    private EditText selecEditText;
+    private GridView signerGridView;
+    private Button signerButton;
     private EditText fileEditText;
 	private Button submitButton;
 	private Button saveButton;
@@ -100,12 +105,17 @@ public class CreatProcess extends Activity{
 				ArrayList<String> leaderidList = intent.getStringArrayListExtra("leaderidList");
 				
 				if(leaderList!=null){
-					String leaders="";
+					//String leaders="";
 					for(int i=0;i<leaderList.size();i++){
-				    	  leaders += leaderList.get(i).toString()+"-"; 
+						HashMap<String, String> hm = new HashMap<String, String>(); 
+				    	  hm.put("signer", leaderList.get(i).toString()); 
+				    	  hm.put("signerid", leaderidList.get(i).toString());
+				    	  myleaderList.add(hm);
 				    	  leaderid += leaderidList.get(i).toString()+"!";
+				    	  System.out.println("审批人==========="+myleaderList);
 				        }
-					selecEditText.setText(leaders);
+					SimpleAdapter signer_adapter = new SimpleAdapter(this, myleaderList, R.layout.item, new String[]{"signer"}, new int[]{R.id.textView});
+					signerGridView.setAdapter(signer_adapter);
 				}
 				if(processidString!=null){
 					topicEditText = (EditText)findViewById(R.id.et_processName);
@@ -115,7 +125,9 @@ public class CreatProcess extends Activity{
 					try {
 						newTopic = URLEncoder.encode(topicString,"UTF-8");  //编码，防中文乱码
 						String newContent = URLEncoder.encode(contentString, "UTF-8");
-						uploadUrl="http://61.182.203.110:8888/?Requestflag=postprocess&processid="+processidString+
+						MyApplication app = (MyApplication)getApplication();
+						//String urlPath = app.getName() + "requestflag=listfiles";
+						uploadUrl=app.getName()+"Requestflag=postprocess&processid="+processidString+
 								"&processname="+newTopic+"&processexplain="+newContent
 								+"&processpeople="+leaderid+"&postren=029848&degree="+levelId;
 						System.out.println("链接串："+uploadUrl);
@@ -169,12 +181,17 @@ public class CreatProcess extends Activity{
 			String processidString = intent.getStringExtra("processid");
 
 			if(leaderList!=null){
-				String leaders="";	
+				//String leaders="";	
 				for(int i=0;i<leaderList.size();i++){
-			    	  leaders += leaderList.get(i).toString()+"-"; 
+					  HashMap<String, String> hm = new HashMap<String, String>(); 
+			    	  hm.put("signer", leaderList.get(i).toString()); 
+			    	  hm.put("signerid", leaderidList.get(i).toString());
+			    	  myleaderList.add(hm);
 			    	  leaderid += leaderidList.get(i).toString()+"!";
+			    	  System.out.println("审批人==========="+myleaderList);
 			        }
-				selecEditText.setText(leaders);
+				SimpleAdapter signer_adapter = new SimpleAdapter(this, myleaderList, R.layout.item, new String[]{"signer"}, new int[]{R.id.textView});
+				signerGridView.setAdapter(signer_adapter);
 			}
 			if(filesList!=null){
 				String filename="";
@@ -199,7 +216,8 @@ public class CreatProcess extends Activity{
 				try {
 					newTopic = URLEncoder.encode(topicString,"UTF-8");  //编码，防中文乱码
 					String newContent = URLEncoder.encode(contentString, "UTF-8");
-					uploadUrl="http://61.182.203.110:8888/?Requestflag=postprocess&processid="+processidString+
+					MyApplication app = (MyApplication)getApplication();
+					uploadUrl=app.getName()+"Requestflag=postprocess&processid="+processidString+
 							"&processname="+newTopic+"&processexplain="+newContent
 							+"&processpeople="+leaderid+"&postren=029848&degree="+levelId;
 					System.out.println("链接串："+uploadUrl);
@@ -217,10 +235,21 @@ public class CreatProcess extends Activity{
 	
 	public void findview(){
 		levelSpinner = (Spinner)findViewById(R.id.spinner_level);
-		selecEditText =(EditText)findViewById(R.id.et_sign);
+		signerGridView =(GridView)findViewById(R.id.gv_signer);
+		signerButton = (Button)findViewById(R.id.btn_signer);
 		fileEditText = (EditText)findViewById(R.id.et_file);
 		submitButton=(Button)findViewById(R.id.btn_submit);
 		saveButton = (Button)findViewById(R.id.btn_saveProcess);
+		//绑定审批人
+		
+		
+		signerGridView.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view, int position,long id){
+				HashMap<String, String> hm = (HashMap<String, String>)parent.getItemAtPosition(position);  
+				U.toast(CreatProcess.this, "点击了:"+hm.get("signer").toString());
+			}
+		});
+		//绑定文件紧急程度下拉列表
 		SimpleAdapter adapter = new SimpleAdapter(this, list,
 				R.layout.select_item, new String[] { "levelNum",
 						"levelName" }, new int[] { R.id.value,
@@ -239,18 +268,14 @@ public class CreatProcess extends Activity{
 			}
 		});
 		//选择签批人
-		selecEditText.setOnTouchListener(new View.OnTouchListener() {
- 			//按住和松开的标识
-			int touch_flag=0;
-			public boolean onTouch(View v, MotionEvent event) {
-				touch_flag++;
-				if(touch_flag==2){
-					Intent intent = new Intent(CreatProcess.this,Organization.class);
-	 				startActivityForResult(intent, 1);
-				}
-				return false;
-			}
- 		});
+		signerButton.setOnClickListener(new OnClickListener() {
+					
+					public void onClick(View v) {
+		
+						Intent intent = new Intent(CreatProcess.this,Organization.class);
+		 				startActivityForResult(intent, 1);
+					}
+				});
 		//选择附件
 		fileEditText.setOnTouchListener(new View.OnTouchListener() {
  			//按住和松开的标识
@@ -293,9 +318,12 @@ public class CreatProcess extends Activity{
 	// 根据接口得到json数据====================================
 		@SuppressWarnings("unchecked")
 		public void getjson(){
+			MyApplication app = (MyApplication)getApplication();
+			String urlPath = app.getName() + "Requestflag=creategroup&grouptype=1&groupcreatetype=2&createuser=029848&shenpiren="+leaderid+"&groupname="+newTopic;
+			System.out.println("urlPath=========="+urlPath);
 			FinalHttp fh = new FinalHttp(); 
 		     		try {
-		     			fh.get( "http://61.182.203.110:8888/?Requestflag=creategroup&grouptype=1&groupcreatetype=2&createuser=029848&shenpiren="+leaderid+"&groupname="+newTopic,
+		     			fh.get( urlPath,
 		     					new AjaxCallBack() {
 		     						@Override
 		     						public void onStart() {
@@ -314,17 +342,18 @@ public class CreatProcess extends Activity{
 		     							// 访问服务器成功，获得访问结果result
 		     							String str = (String) result;
 		     							//Log.v(TAG,"请求结果(json串)" + result);
-		     							//Log.v(TAG,"str====" + str);
+		     							Log.v(TAG,"str====" + str);
 		     							// ++++++++++++解析数据++++++++++++++++++++++++++++++
 		     							try {
 		     								//listmap = new ArrayList<HashMap<String, String>>();
 		     								JSONObject jsonObject = new JSONObject(str);
 
 		     								String data = jsonObject.getString("ret");
-		     								if(data=="1001"){
+		     								if(data.trim().equals("1001")){
 		     									U.toast(CreatProcess.this, "保存流程成功！");
 		     								} else {
 		     									Log.v(TAG,"data无值,为=" + data);
+		     									U.toast(CreatProcess.this, "保存流程失败！");
 		     								}
 		     							} catch (JSONException e) {
 		     								e.printStackTrace();
